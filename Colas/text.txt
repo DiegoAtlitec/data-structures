@@ -1,0 +1,132 @@
+se me pide hacer una tienda con colas dinamicas, donde :
+la atención de los clientes se
+realiza siempre conforme es su llegada.
+La tienda considera 5 tipos de asuntos a atender:
+1. Compra de alimentos
+2. Devolución
+3. Cambio
+4. Dudas
+5. Otros
+Utiliza una cola dinámica cuyos nodos representen a los clientes que quieren ser atendidos, cada
+cliente debe contar con un identificador único (que el primer cliente debe empezar en 1 y que vaya aumentando en uno para los siguietes clientes) y con el asunto por el que va a la tienda.
+Representa con un número aleatorio entre 20 y 100 la cantidad de clientes que llegarán a la tienda, que será la cantidad de nodos de la cola dinámica.
+La tienda empieza a atender a las 8:00 am y termina de atender a las 16:00 pm. La atención de un cliente es equivalente a la acción dequeue de la cola dinámica, cada que un cliente sea atendido genera de manera aleatoria los minutos que tardo en ser atendido, que este valor este entre 1 y 15.
+La hora en que se empieza atender al primer cliente será a las 8:00 am, para cada cliente que logre ser atendido imprime su identificador, el asunto por el que fue, la hora en que empezó a ser atendido y la hora final en ser atendido. Para los clientes que no alcanzaron a ser atendidos solo imprime su identificador y un mensaje que indique que no fueron atendidos, y no olvides eliminar esos nodos.
+
+tengo estos tres archivos, el requisito que te pido es que uses la recursividad para crear el codigo, tambien que crees las funciones en el archivo funcionCola.c para que en pcola.c solo sea para invocarlas. Te recomiendo que para determinar cuando terminas de atender, vayas sumando los minutos hasta que sean 480 para que despues de esas horas ya no se atiendan.
+
+
+funcionCola.h;
+
+#ifndef FUNCIONCOLA_H
+#define FUNCIONCOLA_H
+
+#define SIZE 100
+
+typedef struct {
+    int array[SIZE];
+    int head;
+    int tail;
+} squeue;
+
+void create(squeue *sque);
+int is_full(squeue *q);
+int is_empty(squeue *q);
+int enqueue(squeue *q, int e);
+int dequeue(squeue *sque);
+void copyCola(squeue *source, squeue *destination);
+void printCola(squeue *q);
+
+#endif
+
+pcola.c:
+#include <stdio.h>
+#include "funcionCola.h"
+
+int main() {
+
+
+
+    return 0;
+}
+
+funcionCola.c:
+
+#include <stdio.h>
+#include "funcionCola.h"
+
+void create(squeue *sque) {
+    sque->head = 0;
+    sque->tail = 0;
+    for (int i = 0; i < SIZE; ++i) {
+        sque->array[i] = 0;
+    }
+}
+
+int is_empty(squeue *q) {
+    return (q->head == q->tail);
+}
+
+int is_full(squeue *q) {
+    return ((q->tail + 1) % SIZE == q->head);
+}
+
+int enqueue(squeue *q, int e) {
+    if (is_full(q)) {
+        printf("La cola esta llena. No se puede agregar mas elementos.\n");
+        return -1;
+    }
+    q->array[q->tail] = e;
+    q->tail = (q->tail + 1) % SIZE;
+    return 0;
+}
+
+
+int dequeue(squeue *sque) {
+    if (is_empty(sque)) {
+        printf("La cola está vacia. No se puede hacer dequeue.\n");
+        return -1; 
+    }
+    int dequeued_element = sque->array[sque->head];
+    if (sque->head == sque->tail) {
+        create(sque);
+    } else {
+        sque->head = (sque->head + 1) % SIZE;
+    }
+    return dequeued_element;
+}
+
+void copyCola(squeue *source, squeue *destination) {
+    if (is_empty(source)) {
+        printf("La cola fuente está vacia, no hay nada que copiar.\n");
+        return;
+    }
+
+    if (is_full(destination)) {
+        printf("La cola destino esta llena, no se pueden copiar mas elementos.\n");
+        return;
+    }
+
+    destination->head = 0;
+    destination->tail = 0;
+
+    int i = source->head;
+    while (i != source->tail) {
+        enqueue(destination, source->array[i]);
+        i = (i + 1) % SIZE;
+    }
+}
+
+void printCola(squeue *q) {
+    if (is_empty(q)) {
+        printf("La cola está vacía.\n");
+        return;
+    }
+    
+    int i = q->head;
+    while (i != q->tail) {
+        printf("%d ", q->array[i]);
+        i = (i + 1) % SIZE;
+    }
+    printf("\n");
+}

@@ -1,0 +1,9 @@
+
+MAC:
+gcc -o hanoi main.c hanoi.c stack.c -I/opt/homebrew/include/SDL2 -D_THREAD_SAFE -L/opt/homebrew/lib -lSDL2 -lSDL2_ttf -lSDL2_mixer -DFONT_PATH=\"./font.TTF\"
+
+
+
+
+Windows:
+gcc -IC:\SDL2\x86_64-w64-mingw32\include\SDL2 -LC:\SDL2\x86_64-w64-mingw32\lib main.c hanoi.c stack.c -o hanoi.exe -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -mconsole

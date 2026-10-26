@@ -1,0 +1,133 @@
+tengo estos archivos 3, me podrias decir como es que los debo compilar, ya que cuando lo intento me dice:
+diego@Diego-2 Practica % gcc palindromo.c palindromoMain.c -o palindromo
+palindromoMain.c:9:12: error: call to undeclared library function 'strcspn' with type 'unsigned long (const char *, const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    phrase[strcspn(phrase, "\n")] = '\0';
+           ^
+palindromoMain.c:9:12: note: include the header <string.h> or explicitly provide a declaration for 'strcspn'
+1 error generated.
+
+
+
+palindromo.c: 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include "palindromo.h"
+
+void initializeStack(Stack *s) {
+    s->top = -1;
+}
+
+void push(Stack *s, char item) {
+    if (s->top == MAX_SIZE - 1) {
+        printf("Error: La pila esta llena\n");
+        return;
+    }
+    s->items[++(s->top)] = item;
+}
+
+char pop(Stack *s) {
+    if (s->top == -1) {
+        printf("Error: La pila esta vacia\n");
+        return '\0';
+    }
+    return s->items[(s->top)--];
+}
+
+void initializeQueue(Queue *q) {
+    q->front = 0;
+    q->rear = -1;
+}
+
+void enqueue(Queue *q, char item) {
+    if (q->rear == MAX_SIZE - 1) {
+        printf("Error: La cola esta llena\n");
+        return;
+    }
+    q->items[++(q->rear)] = item;
+}
+
+char dequeue(Queue *q) {
+    if (q->front > q->rear) {
+        printf("Error: La cola esta vacia\n");
+        return '\0';
+    }
+    return q->items[(q->front)++];
+}
+
+int isPalindrome(char *phrase) {
+    int length = strlen(phrase);
+    Stack stack;
+    Queue queue;
+    initializeStack(&stack);
+    initializeQueue(&queue);
+
+    for (int i = 0; i < length; i++) {
+        if (!isspace(phrase[i])) {
+            push(&stack, tolower(phrase[i]));
+            enqueue(&queue, tolower(phrase[i]));
+        }
+    }
+
+    while (stack.top != -1 && queue.front <= queue.rear) {
+        if (pop(&stack) != dequeue(&queue)) {
+            return 0; 
+        }
+    }
+
+    return 1;
+}
+
+
+
+palindromoMain.c: 
+#include <stdio.h>
+#include "palindromo.h"
+
+int main() {
+    char phrase[MAX_SIZE];
+
+    printf("Introduce una frase para saber si es o no un palindromo: ");
+    fgets(phrase, sizeof(phrase), stdin);
+    phrase[strcspn(phrase, "\n")] = '\0';
+
+    if (isPalindrome(phrase)) {
+        printf("La frase introducida es un palindromo.\n");
+    } else {
+        printf("La frase introducida no es un palindromo.\n");
+    }
+
+    return 0;
+}
+
+
+
+
+palindromo.h: 
+#ifndef PALINDROMO_H
+#define PALINDROMO_H
+
+#define MAX_SIZE 100
+
+typedef struct {
+    char items[MAX_SIZE];
+    int top;
+} Stack;
+
+typedef struct {
+    char items[MAX_SIZE];
+    int front, rear;
+} Queue;
+
+void initializeStack(Stack *s);
+void push(Stack *s, char item);
+char pop(Stack *s);
+
+void initializeQueue(Queue *q);
+void enqueue(Queue *q, char item);
+char dequeue(Queue *q);
+
+int isPalindrome(char *phrase);
+
+#endif
